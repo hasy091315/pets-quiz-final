@@ -27,6 +27,9 @@
 - 랜덤 퀴즈 시작
 
 ### 문제 풀이 화면
+<p align="center">
+  <img src="imagesquiz-screen.png" width="900">
+</p>
 - 현재 문제 번호 표시
 - 객관식 답안 선택
 - 실시간 점수 확인
