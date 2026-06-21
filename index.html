@@ -1,0 +1,2665 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>나는 몇점짜리 견주/집사일까?</title>
+  <style>
+    :root {
+      --cream: #fff7e8;
+      --cream-2: #fff1f4;
+      --card: rgba(255, 255, 255, 0.88);
+      --card-solid: #ffffff;
+      --ink: #322620;
+      --muted: #826f66;
+      --line: rgba(77, 54, 43, 0.14);
+      --dog: #ff9d63;
+      --cat: #b79cff;
+      --mint: #72d6b1;
+      --pink: #ff8fb3;
+      --yellow: #ffd36e;
+      --good: #23966f;
+      --warn: #b56b00;
+      --bad: #c04949;
+      --shadow: 0 24px 70px rgba(102, 63, 38, 0.17);
+      --radius: 28px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 8%, rgba(255, 157, 99, 0.36), transparent 30rem),
+        radial-gradient(circle at 88% 12%, rgba(183, 156, 255, 0.30), transparent 28rem),
+        radial-gradient(circle at 78% 86%, rgba(114, 214, 177, 0.25), transparent 30rem),
+        linear-gradient(135deg, var(--cream), var(--cream-2));
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "🐾 🐾 🐾";
+      position: fixed;
+      z-index: -1;
+      font-size: 42px;
+      letter-spacing: 28px;
+      opacity: 0.12;
+      pointer-events: none;
+      transform: rotate(-18deg);
+    }
+
+    body::before { top: 82px; left: -22px; }
+    body::after { right: -34px; bottom: 94px; transform: rotate(14deg); }
+
+    button, textarea, input, select { font: inherit; }
+    button { color: inherit; }
+
+    .app {
+      width: min(1160px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 24px 0 52px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border: 2px solid rgba(255,255,255,0.72);
+      border-radius: 38px;
+      padding: clamp(22px, 4vw, 46px);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.92), rgba(255,255,255,0.68)),
+        radial-gradient(circle at 92% 28%, rgba(255,211,110,0.34), transparent 18rem);
+      box-shadow: var(--shadow);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 14px;
+      border: 2px dashed rgba(255, 157, 99, 0.28);
+      border-radius: 30px;
+      pointer-events: none;
+    }
+
+    .hero::after {
+      content: "🐶  🐱";
+      position: absolute;
+      right: clamp(10px, 4vw, 48px);
+      top: 22px;
+      font-size: clamp(52px, 10vw, 132px);
+      opacity: 0.16;
+      transform: rotate(9deg);
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(255, 157, 99, 0.15);
+      color: #934422;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      box-shadow: inset 0 0 0 1px rgba(255, 157, 99, 0.20);
+    }
+
+    .nav-tabs {
+      display: inline-flex;
+      gap: 8px;
+      padding: 7px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 28px rgba(102, 63, 38, 0.08);
+    }
+
+    .tab-btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: transparent;
+      cursor: pointer;
+      font-weight: 900;
+      color: var(--muted);
+      transition: transform 160ms ease, background 160ms ease, color 160ms ease;
+    }
+
+    .tab-btn:hover { transform: translateY(-1px); }
+    .tab-btn.active {
+      color: var(--ink);
+      background: #fff;
+      box-shadow: 0 6px 16px rgba(102,63,38,0.10);
+    }
+
+    h1 {
+      position: relative;
+      z-index: 1;
+      margin: 18px 0 12px;
+      font-size: clamp(34px, 6vw, 66px);
+      line-height: 1.02;
+      letter-spacing: -0.06em;
+    }
+
+    .highlight {
+      background: linear-gradient(90deg, #ff7b47, #9c78ff);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .lead {
+      position: relative;
+      z-index: 1;
+      max-width: 820px;
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(16px, 2vw, 20px);
+      line-height: 1.65;
+      letter-spacing: -0.02em;
+    }
+
+    .sticker-row, .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .sticker, .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.78);
+      color: var(--muted);
+      font-weight: 850;
+      letter-spacing: -0.01em;
+    }
+
+    .sticker { padding: 10px 14px; }
+    .pill { padding: 9px 12px; font-size: 14px; }
+
+    .section {
+      margin-top: 22px;
+      padding: clamp(18px, 3vw, 30px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: 0 16px 45px rgba(102, 63, 38, 0.10);
+      backdrop-filter: blur(10px);
+    }
+
+    .hidden { display: none !important; }
+
+    .section-title {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(24px, 3vw, 36px);
+      letter-spacing: -0.05em;
+    }
+
+    h3 {
+      letter-spacing: -0.035em;
+    }
+
+    .caption {
+      margin: 7px 0 0;
+      color: var(--muted);
+      line-height: 1.55;
+      letter-spacing: -0.01em;
+    }
+
+    .chooser {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .animal-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 280px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      background:
+        linear-gradient(160deg, rgba(255,255,255,0.96), rgba(255,255,255,0.76)),
+        var(--card-solid);
+      text-align: left;
+      cursor: pointer;
+      box-shadow: 0 14px 32px rgba(102, 63, 38, 0.09);
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+
+    .animal-card:hover, .animal-card:focus-visible {
+      transform: translateY(-5px) rotate(-0.5deg);
+      box-shadow: 0 22px 52px rgba(102, 63, 38, 0.16);
+      border-color: rgba(255, 157, 99, 0.52);
+      outline: none;
+    }
+
+    .animal-card.cat:hover, .animal-card.cat:focus-visible { border-color: rgba(183, 156, 255, 0.72); }
+
+    .animal-card::before {
+      content: "";
+      position: absolute;
+      width: 210px;
+      height: 210px;
+      right: -64px;
+      bottom: -74px;
+      border-radius: 50%;
+      opacity: 0.20;
+      background: var(--dog);
+    }
+
+    .animal-card.cat::before { background: var(--cat); }
+
+    .mascot {
+      width: 112px;
+      height: 112px;
+      border-radius: 36px 36px 44px 44px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 15px;
+      font-size: 58px;
+      background:
+        radial-gradient(circle at 30% 24%, rgba(255,255,255,0.95), transparent 24px),
+        linear-gradient(145deg, rgba(255,157,99,0.30), rgba(255,211,110,0.40));
+      box-shadow: inset 0 -10px 0 rgba(255,255,255,0.38), 0 10px 22px rgba(102,63,38,0.10);
+    }
+
+    .animal-card.cat .mascot {
+      background:
+        radial-gradient(circle at 30% 24%, rgba(255,255,255,0.95), transparent 24px),
+        linear-gradient(145deg, rgba(183,156,255,0.34), rgba(255,143,179,0.30));
+    }
+
+    .animal-card h3 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    .animal-card p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .card-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+      margin-top: 18px;
+    }
+
+    .stat {
+      padding: 11px 8px;
+      border-radius: 18px;
+      background: rgba(255, 157, 99, 0.09);
+      text-align: center;
+      border: 1px solid rgba(255, 157, 99, 0.10);
+    }
+
+    .animal-card.cat .stat {
+      background: rgba(183, 156, 255, 0.10);
+      border-color: rgba(183, 156, 255, 0.14);
+    }
+
+    .stat b { display: block; font-size: 20px; }
+    .stat span { color: var(--muted); font-size: 12px; font-weight: 900; }
+
+    .quiz-top {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .progress-wrap { min-width: 0; }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar {
+      height: 13px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(50, 38, 32, 0.10);
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .progress-bar span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--dog), var(--cat), var(--mint));
+      transition: width 260ms ease;
+    }
+
+    .score-chip {
+      justify-self: end;
+      min-width: 128px;
+      padding: 12px 16px;
+      border-radius: 22px;
+      background: #fff;
+      border: 1px solid var(--line);
+      text-align: center;
+      box-shadow: 0 10px 24px rgba(102,63,38,0.08);
+      font-weight: 950;
+    }
+
+    .question-card {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(20px, 3vw, 30px);
+      border-radius: 30px;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: 0 16px 34px rgba(102, 63, 38, 0.10);
+    }
+
+    .question-card::after {
+      content: "ฅ՞•ﻌ•՞ฅ";
+      position: absolute;
+      right: 24px;
+      bottom: 18px;
+      color: rgba(130,111,102,0.12);
+      font-size: 38px;
+      font-weight: 900;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .question-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .q-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .tier-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 211, 110, 0.20);
+      border: 1px solid rgba(255, 211, 110, 0.35);
+      color: #73501f;
+      font-weight: 950;
+      font-size: 14px;
+    }
+
+    .question {
+      margin: 0;
+      font-size: clamp(23px, 3.2vw, 34px);
+      line-height: 1.32;
+      letter-spacing: -0.04em;
+      max-width: 880px;
+    }
+
+    .answer-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 22px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .answer-btn {
+      position: relative;
+      min-height: 86px;
+      padding: 16px 18px 16px 48px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: linear-gradient(180deg, #fff, #fffaf8);
+      text-align: left;
+      cursor: pointer;
+      color: var(--ink);
+      font-weight: 780;
+      line-height: 1.45;
+      box-shadow: 0 8px 18px rgba(102,63,38,0.07);
+      transition: transform 150ms ease, border-color 150ms ease, background 150ms ease;
+    }
+
+    .answer-btn::before {
+      content: "🐾";
+      position: absolute;
+      left: 15px;
+      top: 16px;
+      opacity: 0.46;
+    }
+
+    .answer-btn:hover:not(:disabled), .answer-btn:focus-visible {
+      transform: translateY(-2px);
+      border-color: rgba(255,157,99,0.55);
+      outline: none;
+    }
+
+    .answer-btn:disabled { cursor: default; opacity: 0.92; }
+
+    .answer-btn.selected {
+      border-color: rgba(255,157,99,0.80);
+      background: linear-gradient(180deg, rgba(255,157,99,0.16), #fff);
+    }
+
+    .answer-btn.best {
+      border-color: rgba(35,150,111,0.65);
+      background: linear-gradient(180deg, rgba(114,214,177,0.20), #fff);
+    }
+
+    .answer-btn.low.selected {
+      border-color: rgba(192,73,73,0.48);
+      background: linear-gradient(180deg, rgba(255,143,143,0.16), #fff);
+    }
+
+    .feedback {
+      margin-top: 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(114,214,177,0.35);
+      background: rgba(114,214,177,0.12);
+      padding: 16px 18px;
+      line-height: 1.62;
+      color: #285f4c;
+      font-weight: 780;
+    }
+
+    .feedback strong { color: var(--ink); }
+
+    .quiz-actions, .result-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+      justify-content: flex-end;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .primary-btn, .ghost-btn, .small-btn, .danger-btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 17px;
+      cursor: pointer;
+      font-weight: 950;
+      letter-spacing: -0.01em;
+      transition: transform 150ms ease, box-shadow 150ms ease, opacity 150ms ease;
+    }
+
+    .primary-btn {
+      color: #fff;
+      background: linear-gradient(135deg, #ff7b47, #9c78ff);
+      box-shadow: 0 12px 22px rgba(156,120,255,0.22);
+    }
+
+    .primary-btn:hover:not(:disabled), .ghost-btn:hover, .small-btn:hover, .danger-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .primary-btn:disabled { opacity: 0.42; cursor: default; transform: none; }
+
+    .ghost-btn, .small-btn {
+      background: #fff;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 18px rgba(102,63,38,0.06);
+    }
+
+    .danger-btn {
+      background: rgba(255,143,179,0.18);
+      color: #9d3654;
+      border: 1px solid rgba(255,143,179,0.32);
+    }
+
+    .editor-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .editor-panel {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      background: rgba(255,255,255,0.82);
+      box-shadow: 0 12px 28px rgba(102,63,38,0.08);
+    }
+
+    .editor-panel h3 {
+      margin: 0 0 8px;
+      font-size: 22px;
+    }
+
+    .editor-help {
+      margin: 0 0 14px;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    textarea {
+      display: block;
+      width: 100%;
+      min-height: 520px;
+      resize: vertical;
+      border: 1px solid rgba(77,54,43,0.18);
+      border-radius: 20px;
+      padding: 16px;
+      background: #fffdfb;
+      color: #2d2520;
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.55;
+      tab-size: 2;
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: rgba(156,120,255,0.56);
+      box-shadow: 0 0 0 4px rgba(156,120,255,0.10);
+    }
+
+    .validation {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255,211,110,0.16);
+      border: 1px solid rgba(255,211,110,0.28);
+      color: #73501f;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      font-weight: 760;
+    }
+
+    .validation.ok {
+      background: rgba(114,214,177,0.16);
+      border-color: rgba(114,214,177,0.38);
+      color: #2b6650;
+    }
+
+    .validation.bad {
+      background: rgba(255,143,179,0.14);
+      border-color: rgba(255,143,179,0.32);
+      color: #87324a;
+    }
+
+    .question-preview {
+      max-height: 706px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .preview-group {
+      margin-bottom: 14px;
+      border-radius: 20px;
+      background: #fff;
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .preview-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      background: linear-gradient(90deg, rgba(255,157,99,0.11), rgba(183,156,255,0.10));
+      font-weight: 950;
+    }
+
+    .preview-list {
+      margin: 0;
+      padding: 10px 14px 14px 30px;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .preview-list li { margin: 6px 0; }
+
+    .mini-counts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .mini-count {
+      padding: 12px 8px;
+      border-radius: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      text-align: center;
+      font-weight: 950;
+    }
+
+    .mini-count span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .result-layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 360px) 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .score-card {
+      position: sticky;
+      top: 18px;
+      padding: 22px;
+      border-radius: 30px;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: 0 16px 36px rgba(102,63,38,0.10);
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .score-card::before {
+      content: "🎉";
+      position: absolute;
+      right: 18px;
+      top: 14px;
+      font-size: 38px;
+      opacity: 0.24;
+    }
+
+    .score-ring {
+      width: 202px;
+      height: 202px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background:
+        conic-gradient(var(--dog) var(--angle), rgba(50,38,32,0.10) 0);
+      box-shadow: inset 0 0 0 1px rgba(50,38,32,0.07);
+    }
+
+    .score-ring-inner {
+      width: 152px;
+      height: 152px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #fff;
+      box-shadow: inset 0 0 0 1px rgba(50,38,32,0.08);
+    }
+
+    .score-number {
+      font-size: 50px;
+      font-weight: 1000;
+      letter-spacing: -0.06em;
+    }
+
+    .score-number small {
+      font-size: 16px;
+      letter-spacing: -0.02em;
+      margin-left: 2px;
+      color: var(--muted);
+    }
+
+    .rank {
+      margin: 0;
+      font-size: 26px;
+    }
+
+    .rank-copy {
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 8px 0 0;
+    }
+
+    .breakdown {
+      margin-top: 16px;
+      display: grid;
+      gap: 9px;
+      text-align: left;
+    }
+
+    .break-item {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,247,232,0.66);
+    }
+
+    .break-item .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-weight: 950;
+    }
+
+    .thin-bar {
+      margin-top: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(50,38,32,0.09);
+      overflow: hidden;
+    }
+
+    .thin-bar span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--mint), var(--cat));
+    }
+
+    .review-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .review-item {
+      padding: 16px;
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      background: #fff;
+      box-shadow: 0 8px 18px rgba(102,63,38,0.06);
+      line-height: 1.58;
+    }
+
+    .review-item b {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--ink);
+    }
+
+    .review-item .user-answer {
+      color: var(--muted);
+      font-weight: 800;
+      margin-top: 8px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%) translateY(16px);
+      opacity: 0;
+      pointer-events: none;
+      padding: 12px 16px;
+      border-radius: 999px;
+      color: #fff;
+      background: rgba(50, 38, 32, 0.90);
+      box-shadow: 0 14px 30px rgba(0,0,0,0.18);
+      font-weight: 900;
+      transition: opacity 180ms ease, transform 180ms ease;
+      z-index: 10;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .confetti-piece {
+      position: fixed;
+      top: -28px;
+      z-index: 20;
+      pointer-events: none;
+      animation: fall 1400ms ease-in forwards;
+      font-size: 23px;
+    }
+
+    @keyframes fall {
+      to { transform: translateY(110vh) rotate(540deg); opacity: 0; }
+    }
+
+    .source-box {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 20px;
+      background: rgba(255, 211, 110, 0.15);
+      border: 1px solid rgba(255, 211, 110, 0.25);
+      color: #73501f;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .empty-note {
+      padding: 18px;
+      border-radius: 20px;
+      background: rgba(255,143,179,0.12);
+      color: #87324a;
+      border: 1px solid rgba(255,143,179,0.25);
+      font-weight: 820;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 900px) {
+      .top-row, .section-title, .quiz-top {
+        grid-template-columns: 1fr;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .nav-tabs { align-self: flex-start; }
+
+      .chooser, .answer-grid, .result-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .score-chip { justify-self: stretch; }
+      .score-card { position: static; }
+      textarea { min-height: 430px; }
+    }
+
+    @media (max-width: 560px) {
+      .app { width: min(100% - 18px, 1160px); padding-top: 10px; }
+      .hero { border-radius: 28px; }
+      .section { border-radius: 24px; }
+      .animal-card { min-height: 0; }
+      .card-stats, .mini-counts { grid-template-columns: 1fr; }
+      .question-card::after { display: none; }
+      .quiz-actions, .result-actions { justify-content: stretch; }
+      .primary-btn, .ghost-btn, .small-btn, .danger-btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <div class="top-row">
+        <span class="eyebrow">🐾 만점짜리 견주/집사로 거듭나기 위한 노력!</span>
+      </div>
+
+      <h1>나는 몇점짜리 <span class="highlight">견주/집사</span>일까?</h1>
+      <p class="lead">
+        강아지와 고양이 섹션을 나눠서 진행합니다. 매번 <b>기본 애정 5문항</b>,
+        <b>실전 보호자 3문항</b>, <b>박사 난이도 2문항</b>이 랜덤으로 섞여 출제됩니다.
+        점수는 재미용이며, 만점짜리 보호자로 거듭나기 위한 체크리스트처럼 즐겨보세요.
+      </p>
+      <div class="sticker-row">
+        <span class="sticker">🦴 견주 점수</span>
+        <span class="sticker">🐟 집사 점수</span>
+        <span class="sticker">🎲 랜덤 10문항</span>
+      </div>
+    </header>
+
+    <section id="start-screen" class="section" aria-labelledby="start-title">
+      <div class="section-title">
+        <div>
+          <h2 id="start-title">섹션 선택</h2>
+          <p class="caption">댕댕이 보호자라면 견주 테스트, 냥님에게 간택받았다면 집사 테스트를 시작하세요.</p>
+        </div>
+        <div class="pill-row" style="margin-top:0">
+          <span class="pill">💚 기본 5</span>
+          <span class="pill">🧡 실전 3</span>
+          <span class="pill">💜 박사 2</span>
+        </div>
+      </div>
+
+      <div class="chooser">
+        <button class="animal-card dog" type="button" data-start="dog">
+          <span class="mascot" aria-hidden="true">🐶</span>
+          <h3>견주 자격 테스트</h3>
+          <p>산책, 훈련, 건강 신호, 응급 대처까지. 강아지를 사랑하는 마음과 실전 센스를 같이 봅니다.</p>
+          <div class="card-stats">
+            <div class="stat"><b id="dog-basic-count">0</b><span>기본 문항</span></div>
+            <div class="stat"><b id="dog-intermediate-count">0</b><span>실전 문항</span></div>
+            <div class="stat"><b id="dog-expert-count">0</b><span>박사 문항</span></div>
+          </div>
+        </button>
+
+        <button class="animal-card cat" type="button" data-start="cat">
+          <span class="mascot" aria-hidden="true">🐱</span>
+          <h3>집사 자격 테스트</h3>
+          <p>놀이, 화장실, 환경 풍부화, 합사와 건강 신호까지. 냥님을 모시는 디테일을 확인합니다.</p>
+          <div class="card-stats">
+            <div class="stat"><b id="cat-basic-count">0</b><span>기본 문항</span></div>
+            <div class="stat"><b id="cat-intermediate-count">0</b><span>실전 문항</span></div>
+            <div class="stat"><b id="cat-expert-count">0</b><span>박사 문항</span></div>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <section id="quiz-screen" class="section hidden" aria-labelledby="quiz-title">
+      <div class="section-title">
+        <div>
+          <h2 id="quiz-title">테스트</h2>
+          <p id="quiz-subtitle" class="caption"></p>
+        </div>
+        <div class="pill-row" style="margin-top:0">
+          <span class="pill">🎲 랜덤 섞기 완료</span>
+          <span class="pill">💯 총점 100점</span>
+        </div>
+      </div>
+
+      <div class="quiz-top">
+        <div class="progress-wrap">
+          <div class="progress-label">
+            <span id="progress-text">1 / 10</span>
+            <span id="difficulty-text">난이도</span>
+          </div>
+          <div class="progress-bar" aria-hidden="true"><span id="progress-bar"></span></div>
+        </div>
+        <div class="score-chip"><span id="score-label">점수</span> <span id="live-score">0</span></div>
+      </div>
+
+      <article class="question-card">
+        <div class="q-meta">
+          <span id="tier-badge" class="tier-badge">💚 기본 애정</span>
+          <span id="question-id" class="pill">ID</span>
+        </div>
+        <h2 id="question-text" class="question"></h2>
+        <div id="answers" class="answer-grid"></div>
+        <div id="feedback" class="feedback hidden"></div>
+        <div class="quiz-actions">
+          <button id="back-to-start-btn" class="ghost-btn" type="button">섹션 다시 선택</button>
+          <button id="next-btn" class="primary-btn" type="button" disabled>다음 문제</button>
+        </div>
+      </article>
+    </section>
+
+    <section id="result-screen" class="section hidden" aria-labelledby="result-title">
+      <div class="section-title">
+        <div>
+          <h2 id="result-title">결과</h2>
+          <p id="result-subtitle" class="caption"></p>
+        </div>
+        <div class="result-actions" style="margin-top:0">
+          <button id="restart-same-btn" class="small-btn" type="button">같은 섹션 다시</button>
+          <button id="restart-other-btn" class="small-btn" type="button">다른 섹션</button>
+          <button id="copy-result-btn" class="small-btn" type="button">결과 복사</button>
+        </div>
+      </div>
+
+      <div class="result-layout">
+        <aside class="score-card">
+          <div id="score-ring" class="score-ring" style="--angle: 0deg">
+            <div class="score-ring-inner">
+              <div class="score-number"><span id="score-number">0</span><small>점</small></div>
+            </div>
+          </div>
+          <h3 id="rank" class="rank"></h3>
+          <p id="rank-copy" class="rank-copy"></p>
+          <div id="breakdown" class="breakdown"></div>
+        </aside>
+
+        <div>
+          <h2 style="margin-bottom:12px">답변 리뷰</h2>
+          <div id="review-list" class="review-list"></div>
+          <div class="source-box">
+            이 테스트는 재미용 점수 앱입니다. 응급 증상, 약물, 식욕 부진, 배뇨 문제처럼 건강과 관련된 상황은 앱 결과가 아니라 동물병원 판단을 우선하세요.
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite">완료!</div>
+
+  <script>
+    const TIER_META = {
+  "basic": {
+    "label": "기본 애정",
+    "emoji": "💚",
+    "quota": 5,
+    "points": 8
+  },
+  "intermediate": {
+    "label": "실전 보호자",
+    "emoji": "🧡",
+    "quota": 3,
+    "points": 10
+  },
+  "expert": {
+    "label": "박사 난이도",
+    "emoji": "💜",
+    "quota": 2,
+    "points": 15
+  }
+};
+    const DEFAULT_QUESTION_BANK = {
+  "dog": [
+    {
+      "id": "dog-basic-01",
+      "tier": "basic",
+      "text": "건강한 성견의 산책 루틴을 잡을 때 가장 좋은 기준은?",
+      "options": [
+        {
+          "text": "일주일에 한 번 길게 몰아서 산책하면 충분하다",
+          "score": 0.2
+        },
+        {
+          "text": "견상태에 맞춰 거의 매일 산책을 제공한다",
+          "score": 1
+        },
+        {
+          "text": "마당이나 거실에서 뛰면 외부 산책은 필요 없다",
+          "score": 0.15
+        },
+        {
+          "text": "견이 매일 지칠 때까지 뛰게 해준다",
+          "score": 0.35
+        }
+      ],
+      "explanation": "강아지 산책은 운동뿐 아니라 냄새와 환경을 읽는 정신 자극입니다. 양은 개체별로 조절하는 태도가 가장 좋습니다."
+    },
+    {
+      "id": "dog-basic-02",
+      "tier": "basic",
+      "text": "산책 중 강아지가 자꾸 멈춰서 냄새를 맡을 때 보호자 센스는?",
+      "options": [
+        {
+          "text": "산책은 걷는 시간이므로 계속 끌고 간다",
+          "score": 0.1
+        },
+        {
+          "text": "안전한 곳에서는 냄새 맡는 시간을 준다",
+          "score": 1
+        },
+        {
+          "text": "냄새 맡으면 고집이 세지니 리드줄을 끈다",
+          "score": 0
+        },
+        {
+          "text": "리드줄을 길게 놓고 주변은 신경 쓰지 않는다",
+          "score": 0.45
+        }
+      ],
+      "explanation": "냄새 맡기는 강아지에게 중요한 정보 탐색입니다. 허용하되 리드줄, 사람, 다른 동물, 차량을 함께 봐야 합니다."
+    },
+    {
+      "id": "dog-basic-03",
+      "tier": "basic",
+      "text": "한여름 낮 아스팔트가 뜨거울 때 가장 안전한 산책 계획은?",
+      "options": [
+        {
+          "text": "원래 시간표대로 나가되 빠르게 걷는다",
+          "score": 0.15
+        },
+        {
+          "text": "해가 약한 시간으로 미룬다",
+          "score": 1
+        },
+        {
+          "text": "발바닥은 단단하니 뛰게 해서 빨리 끝낸다",
+          "score": 0
+        },
+        {
+          "text": "목줄 대신 하네스만 쓰면 더위 위험은 줄어든다",
+          "score": 0.2
+        }
+      ],
+      "explanation": "뜨거운 바닥은 발바닥 화상과 열 스트레스 위험을 높입니다. 시간, 바닥, 물, 그늘을 같이 고려해야 합니다."
+    },
+    {
+      "id": "dog-basic-04",
+      "tier": "basic",
+      "text": "산책 매너로 가장 알맞은 것은?",
+      "options": [
+        {
+          "text": "배변은 자연으로 돌아가니 그대로 둔다",
+          "score": 0
+        },
+        {
+          "text": "배변봉투를 항상 챙겨다닌다",
+          "score": 1
+        },
+        {
+          "text": "우리 강아지는 착하니 리드줄 없이 다녀도 된다",
+          "score": 0.05
+        },
+        {
+          "text": "사람이 없는 곳에서는 배변을 치우지 않아도 된다",
+          "score": 0.1
+        }
+      ],
+      "explanation": "좋은 견주는 반려견뿐 아니라 동네의 사람, 동물, 환경까지 함께 배려합니다."
+    },
+    {
+      "id": "dog-basic-05",
+      "tier": "basic",
+      "text": "처음 보는 강아지와 인사시키고 싶을 때 가장 좋은 매너는?",
+      "options": [
+        {
+          "text": "사회성을 키우려면 바로 코앞에 붙인다",
+          "score": 0.1
+        },
+        {
+          "text": "상대 보호자에게 먼저 묻고, 천천히 접근한다",
+          "score": 1
+        },
+        {
+          "text": "짖어도 인사는 꼭 해야 한다",
+          "score": 0.05
+        },
+        {
+          "text": "작은 강아지는 안아 올려 상대 강아지 코앞에 보여준다",
+          "score": 0
+        }
+      ],
+      "explanation": "인사는 선택입니다. 보호자의 동의, 거리, 몸짓 신호를 보는 것이 안전한 사회 경험을 만듭니다."
+    },
+    {
+      "id": "dog-basic-06",
+      "tier": "basic",
+      "text": "강아지의 물과 사료 관리로 가장 좋은 기본은?",
+      "options": [
+        {
+          "text": "물은 산책 후에만 준다",
+          "score": 0
+        },
+        {
+          "text": "깨끗한 물을 항상 둔다",
+          "score": 1
+        },
+        {
+          "text": "먹고 싶어 하면 간식으로 배를 채워도 된다",
+          "score": 0.15
+        },
+        {
+          "text": "살이 찌면 물부터 줄인다",
+          "score": 0
+        }
+      ],
+      "explanation": "수분과 적정 체중 관리는 기본 중의 기본입니다. 급격한 체중 변화는 건강 점검이 필요할 수 있습니다."
+    },
+    {
+      "id": "dog-basic-07",
+      "tier": "basic",
+      "text": "입·귀·발을 만지는 연습을 할 때 가장 좋은 방식은?",
+      "options": [
+        {
+          "text": "싫어해도 꾹 잡고 빨리 끝낸다",
+          "score": 0.15
+        },
+        {
+          "text": "아주 짧게 만지고 보상하며, 천천히 늘린다",
+          "score": 1
+        },
+        {
+          "text": "병원 가는 날에만 처음 만져도 충분하다",
+          "score": 0.2
+        },
+        {
+          "text": "간식을 쓰면 버릇이 나빠지니 쓰지 않는다",
+          "score": 0.05
+        }
+      ],
+      "explanation": "핸들링 연습은 미용, 진료, 응급상황에서 큰 도움이 됩니다. 짧은 성공과 보상이 핵심입니다."
+    },
+    {
+      "id": "dog-basic-08",
+      "tier": "basic",
+      "text": "강아지가 혼자 있어야 하는 시간이 생길 때 좋은 준비는?",
+      "options": [
+        {
+          "text": "갑자기 오래 혼자 둬서 익숙해지게 한다",
+          "score": 0.05
+        },
+        {
+          "text": "짧은 시간부터 연습한다",
+          "score": 1
+        },
+        {
+          "text": "짖으면 혼내면 된다",
+          "score": 0.1
+        },
+        {
+          "text": "TV를 크게 틀어두면 분리불안은 대부분 해결된다",
+          "score": 0.25
+        }
+      ],
+      "explanation": "혼자 있기 연습은 짧고 긍정적으로 시작하는 편이 좋습니다. 불안이 심하면 전문가 상담이 필요할 수 있습니다."
+    },
+    {
+      "id": "dog-basic-09",
+      "tier": "basic",
+      "text": "정기 건강관리로 가장 알맞은 태도는?",
+      "options": [
+        {
+          "text": "아파 보일 때만 병원에 간다",
+          "score": 0.25
+        },
+        {
+          "text": "정기 검진, 백신, 기생충 예방, 치아 관리를 수의사와 계획한다",
+          "score": 1
+        },
+        {
+          "text": "인터넷 후기만 보고 약을 직접 고른다",
+          "score": 0.05
+        },
+        {
+          "text": "실내견은 예방이 거의 필요 없다",
+          "score": 0.1
+        }
+      ],
+      "explanation": "예방 진료는 문제가 커지기 전에 발견하고 관리하는 데 도움이 됩니다. 생활환경에 맞춘 계획이 중요합니다."
+    },
+    {
+      "id": "dog-basic-10",
+      "tier": "basic",
+      "text": "강아지가 먹으면 위험할 수 있는 것만 고른 선택지는?",
+      "options": [
+        {
+          "text": "포도·건포도, 자일리톨, 초콜릿, 양파류",
+          "score": 1
+        },
+        {
+          "text": "삶은 닭가슴살, 단호박, 물",
+          "score": 0.05
+        },
+        {
+          "text": "쌀밥, 오이, 사과 과육",
+          "score": 0.2
+        },
+        {
+          "text": "강아지 전용 사료와 처방 간식",
+          "score": 0
+        }
+      ],
+      "explanation": "포도·건포도, 자일리톨, 초콜릿, 양파류 등은 위험할 수 있습니다. 섭취가 의심되면 병원에 문의하는 태도가 안전합니다."
+    },
+    {
+      "id": "dog-intermediate-01",
+      "tier": "intermediate",
+      "text": "강아지가 입술을 핥고, 하품하고, 고개를 돌리며 몸을 낮춥니다. 가장 가능성 높은 해석은?",
+      "options": [
+        {
+          "text": "졸리고 심심하다는 뜻만 있다",
+          "score": 0.2
+        },
+        {
+          "text": "불편함이나 스트레스 신호일 가능성이 높다",
+          "score": 1
+        },
+        {
+          "text": "무조건 공격 직전이니 즉시 혼낸다",
+          "score": 0.1
+        },
+        {
+          "text": "기분 좋다는 뜻이니 더 만진다",
+          "score": 0.15
+        }
+      ],
+      "explanation": "입술 핥기, 하품, 시선 회피, 몸 낮추기는 스트레스 신호일 수 있습니다. 한 가지 신호보다 맥락을 함께 봐야 합니다."
+    },
+    {
+      "id": "dog-intermediate-02",
+      "tier": "intermediate",
+      "text": "하네스를 보면 강아지가 너무 흥분해 문 앞에서 점프합니다. 가장 좋은 훈련 방향은?",
+      "options": [
+        {
+          "text": "소리쳐서 멈출 때까지 기다린다",
+          "score": 0.15
+        },
+        {
+          "text": "하네스를 짧게 보여주고, 차분한 행동을 보상한다",
+          "score": 1
+        },
+        {
+          "text": "흥분하니 산책을 아예 끊는다",
+          "score": 0.05
+        },
+        {
+          "text": "문 밖으로 끌고 나가면 알아서 진정된다",
+          "score": 0.25
+        }
+      ],
+      "explanation": "흥분은 처벌보다 예측 가능한 루틴과 보상으로 낮추는 편이 좋습니다. 작은 성공을 반복해서 쌓습니다."
+    },
+    {
+      "id": "dog-intermediate-03",
+      "tier": "intermediate",
+      "text": "강아지 사회화에 대한 설명으로 가장 적절한 것은?",
+      "options": [
+        {
+          "text": "접종이 모두 끝날 때까지 어떤 새로운 경험도 피한다",
+          "score": 0.2
+        },
+        {
+          "text": "중요한 시기에 안전한 경험을 단계적으로 쌓게 한다",
+          "score": 1
+        },
+        {
+          "text": "무조건 많은 개와 놀게 하는 것이 사회화다",
+          "score": 0.25
+        },
+        {
+          "text": "한 번 겁먹어도 많이 노출하면 저절로 좋아진다",
+          "score": 0.1
+        }
+      ],
+      "explanation": "사회화는 무작정 노출이 아니라 안전하고 긍정적인 경험을 누적하는 과정입니다."
+    },
+    {
+      "id": "dog-intermediate-04",
+      "tier": "intermediate",
+      "text": "보상 기반 훈련에서 ‘마커’나 칭찬 타이밍은 언제가 가장 좋을까요?",
+      "options": [
+        {
+          "text": "원하는 행동이 나온 바로 그 순간",
+          "score": 1
+        },
+        {
+          "text": "집에 돌아와서 한꺼번에",
+          "score": 0.15
+        },
+        {
+          "text": "실수한 직후 큰 소리로",
+          "score": 0.05
+        },
+        {
+          "text": "강아지가 지루해질 때까지 반복한 뒤",
+          "score": 0.25
+        }
+      ],
+      "explanation": "강아지가 어떤 행동 때문에 보상받았는지 연결하려면 타이밍이 매우 중요합니다."
+    },
+    {
+      "id": "dog-intermediate-05",
+      "tier": "intermediate",
+      "text": "크레이트 교육의 좋은 목표는?",
+      "options": [
+        {
+          "text": "벌주는 장소로 확실히 인식시키기",
+          "score": 0
+        },
+        {
+          "text": "간식, 휴식, 짧은 성공 경험으로 안전한 개인 공간처럼 느끼게 하기",
+          "score": 1
+        },
+        {
+          "text": "처음부터 오래 가둬 익숙하게 만들기",
+          "score": 0.1
+        },
+        {
+          "text": "분리불안이 있으면 하루 종일 크레이트에 두기",
+          "score": 0.05
+        }
+      ],
+      "explanation": "크레이트는 처벌 공간이 아니라 안전한 휴식 공간이 되어야 합니다. 단계적이고 긍정적인 연습이 중요합니다."
+    },
+    {
+      "id": "dog-intermediate-06",
+      "tier": "intermediate",
+      "text": "리드줄을 당기는 강아지에게 가장 좋은 접근은?",
+      "options": [
+        {
+          "text": "목줄을 세게 튕겨서 당기면 불편하다는 걸 알려준다",
+          "score": 0.15
+        },
+        {
+          "text": "당기지 않을 때 전진하고, 보호자 옆으로 돌아오는 행동을 보상하며 자극 수준을 조절한다",
+          "score": 1
+        },
+        {
+          "text": "강아지가 당기는 방향으로 계속 따라간다",
+          "score": 0.2
+        },
+        {
+          "text": "산책 전에 밥을 굶기면 덜 당긴다",
+          "score": 0.05
+        }
+      ],
+      "explanation": "리드줄 예절은 장비만으로 해결되지 않습니다. 당기지 않을 때 원하는 결과가 생기도록 일관성을 만드는 것이 핵심입니다."
+    },
+    {
+      "id": "dog-intermediate-07",
+      "tier": "intermediate",
+      "text": "강아지의 체형을 볼 때 ‘이상적인 바디 컨디션’에 가까운 것은?",
+      "options": [
+        {
+          "text": "갈비뼈가 전혀 만져지지 않을 정도로 통통하다",
+          "score": 0.1
+        },
+        {
+          "text": "갈비뼈가 과하게 보이지 않지만 손으로는 쉽게 만져지고, 위에서 허리가 보인다",
+          "score": 1
+        },
+        {
+          "text": "허리가 없어야 건강해 보인다",
+          "score": 0.05
+        },
+        {
+          "text": "간식을 잘 먹으면 체형은 크게 중요하지 않다",
+          "score": 0.15
+        }
+      ],
+      "explanation": "체형 평가는 숫자 체중만이 아니라 갈비뼈 촉감, 허리선, 복부 라인을 함께 봅니다."
+    },
+    {
+      "id": "dog-intermediate-08",
+      "tier": "intermediate",
+      "text": "반복 구토, 축 처짐, 복부 불편감을 보이는 강아지에게 가장 안전한 행동은?",
+      "options": [
+        {
+          "text": "하루 굶기고 지켜본다",
+          "score": 0.1
+        },
+        {
+          "text": "응급일 수 있으니 즉시 동물병원에 연락하고 이동을 준비한다",
+          "score": 1
+        },
+        {
+          "text": "사람 소화제를 조금 먹인다",
+          "score": 0
+        },
+        {
+          "text": "산책을 시키면 내려갈 수 있다",
+          "score": 0.05
+        }
+      ],
+      "explanation": "반복 구토와 무기력, 복부 불편감은 응급 신호일 수 있습니다. 자가 처치보다 병원 연락이 우선입니다."
+    },
+    {
+      "id": "dog-expert-01",
+      "tier": "expert",
+      "text": "대형견이 배가 부풀고, 침을 흘리며, 토하려 하지만 잘 나오지 않습니다. 가장 의심해야 할 응급상황은?",
+      "options": [
+        {
+          "text": "단순 멀미",
+          "score": 0.05
+        },
+        {
+          "text": "즉시 응급 진료가 필요하다",
+          "score": 1
+        },
+        {
+          "text": "배가 고파서 나는 행동",
+          "score": 0
+        },
+        {
+          "text": "운동 부족이니 뛰게 한다",
+          "score": 0
+        }
+      ],
+      "explanation": "GDV는 빠르게 위험해질 수 있는 응급상황입니다. 반복 헛구역질, 복부 팽만, 불안정한 행동은 즉시 병원 연락이 필요합니다."
+    },
+    {
+      "id": "dog-expert-02",
+      "tier": "expert",
+      "text": "‘트리거 스태킹(trigger stacking)’에 가장 가까운 설명은?",
+      "options": [
+        {
+          "text": "강아지가 한 가지 명령을 여러 번 반복해서 배우는 과정",
+          "score": 0.15
+        },
+        {
+          "text": "작은 스트레스 자극들이 연속으로 쌓여 평소보다 쉽게 폭발하는 상태",
+          "score": 1
+        },
+        {
+          "text": "간식을 여러 개 쌓아두고 기다리게 하는 훈련",
+          "score": 0.05
+        },
+        {
+          "text": "여러 강아지를 한 줄로 세워 사회화하는 방식",
+          "score": 0
+        }
+      ],
+      "explanation": "하루 동안 쌓인 자극은 반응성을 높일 수 있습니다. 산책 코스, 휴식, 거리 조절이 관리 포인트입니다."
+    },
+    {
+      "id": "dog-expert-03",
+      "tier": "expert",
+      "text": "겁이 많은 강아지에게 ‘탈감작+역조건형성’을 적용한다면 핵심은?",
+      "options": [
+        {
+          "text": "무서워하는 자극 한가운데에 오래 두기",
+          "score": 0
+        },
+        {
+          "text": "견딜 수 있는 거리와 강도에서 시작해 좋은 보상과 연결하며 천천히 올리기",
+          "score": 1
+        },
+        {
+          "text": "짖을 때마다 벌을 줘서 감정을 끊기",
+          "score": 0.05
+        },
+        {
+          "text": "보호자가 무시하면 공포도 사라진다",
+          "score": 0.25
+        }
+      ],
+      "explanation": "공포 학습은 무리하면 악화될 수 있습니다. 강아지가 먹고 생각할 수 있는 수준에서 작게 성공시키는 것이 핵심입니다."
+    },
+    {
+      "id": "dog-expert-04",
+      "tier": "expert",
+      "text": "머즐 트레이닝에 대한 가장 전문적인 설명은?",
+      "options": [
+        {
+          "text": "공격적인 개에게만 벌로 씌우는 도구다",
+          "score": 0.05
+        },
+        {
+          "text": "진료, 미용, 응급상황에서 안전을 돕도록 평소 긍정적으로 적응시키는 훈련이다",
+          "score": 1
+        },
+        {
+          "text": "씌우면 짖음과 불안이 자동으로 해결된다",
+          "score": 0.15
+        },
+        {
+          "text": "한 번에 오래 씌워야 빨리 적응한다",
+          "score": 0.05
+        }
+      ],
+      "explanation": "잘 적응된 머즐은 안전장비입니다. 간식과 짧은 착용부터 시작하면 병원·미용 상황의 스트레스를 낮출 수 있습니다."
+    },
+    {
+      "id": "dog-expert-05",
+      "tier": "expert",
+      "text": "심장사상충 예방약을 몇 달 빼먹었다면 가장 안전한 태도는?",
+      "options": [
+        {
+          "text": "생각난 김에 두세 달치를 한 번에 먹인다",
+          "score": 0
+        },
+        {
+          "text": "동물병원에 문의해 재개 계획을 세운다",
+          "score": 1
+        },
+        {
+          "text": "실내견이면 더 이상 신경 쓰지 않아도 된다",
+          "score": 0.05
+        },
+        {
+          "text": "모기 많은 계절에만 아무 약이나 사서 먹인다",
+          "score": 0.15
+        }
+      ],
+      "explanation": "예방약 누락 후 재개는 기간과 지역 위험에 따라 달라질 수 있습니다. 임의로 몰아 먹이지 말고 병원에 확인하는 태도가 안전합니다."
+    },
+    {
+      "id": "dog-expert-06",
+      "tier": "expert",
+      "text": "‘더블 메를’ 교배 이야기가 나오는 이유로 가장 맞는 것은?",
+      "options": [
+        {
+          "text": "메를 무늬 강아지는 모두 건강하지 않아서",
+          "score": 0.15
+        },
+        {
+          "text": "메를끼리 교배하면 일부 자견에서 청각·시각 문제 위험이 커질 수 있어서",
+          "score": 1
+        },
+        {
+          "text": "털색이 흐려져서 미용상 보기 안 좋아서",
+          "score": 0.05
+        },
+        {
+          "text": "성격이 반드시 사나워져서",
+          "score": 0
+        }
+      ],
+      "explanation": "털색 유전은 외모만의 문제가 아닐 수 있습니다. 책임 있는 번식에서는 유전적 건강 위험을 함께 고려합니다."
+    },
+    {
+      "id": "dog-expert-07",
+      "tier": "expert",
+      "text": "장난감이나 밥그릇을 지키는 ‘리소스 가딩’에 대한 전문적인 접근은?",
+      "options": [
+        {
+          "text": "빼앗아야 보호자 서열이 선다",
+          "score": 0
+        },
+        {
+          "text": "안전 관리를 먼저 하고, 교환 게임·거리 조절·전문가 상담으로 예측 가능성을 높인다",
+          "score": 1
+        },
+        {
+          "text": "못 지키게 밥을 아주 조금만 준다",
+          "score": 0.05
+        },
+        {
+          "text": "혼내면 물건에 대한 애착이 바로 사라진다",
+          "score": 0
+        }
+      ],
+      "explanation": "리소스 가딩은 힘겨루기로 악화될 수 있습니다. 안전한 관리와 긍정적인 교환 경험이 중요합니다."
+    }
+  ],
+  "cat": [
+    {
+      "id": "cat-basic-01",
+      "tier": "basic",
+      "text": "실내 고양이의 하루 놀이로 가장 좋은 기본은?",
+      "options": [
+        {
+          "text": "사람이 놀아주기 보다는 혼자서 놀게 둬야 한다",
+          "score": 0.1
+        },
+        {
+          "text": "사냥하듯 짧고 집중적인 상호작용 놀이를 매일 여러 번 제공한다",
+          "score": 1
+        },
+        {
+          "text": "일주일에 한두번씩 몰아서 오래 놀아주는 것이 좋다",
+          "score": 0
+        },
+        {
+          "text": "제일 좋아하는 장난감 하나로만 쭉 놀아주는 것이 좋다",
+          "score": 0.1
+        }
+      ],
+      "explanation": "고양이는 짧은 사냥 행동을 반복하는 동물입니다. 낚싯대, 공, 숨기기 놀이처럼 다양하게 집사가 참여하는 시간이 중요합니다."
+    },
+    {
+      "id": "cat-basic-02",
+      "tier": "basic",
+      "text": "고양이 화장실 개수의 가장 유명한 기본 공식은?",
+      "options": [
+        {
+          "text": "집 전체에 하나면 충분하다",
+          "score": 0.2
+        },
+        {
+          "text": "고양이 수 + 1개를 서로 다른 위치에 두는 것이 좋다",
+          "score": 1
+        },
+        {
+          "text": "고양이 두 마리 당 하나를 배치하는 것이 좋다",
+          "score": 0.2
+        },
+        {
+          "text": "좁은 화장실 여러 개 보다 넓은 화장실 하나가 좋다",
+          "score": 0.1
+        }
+      ],
+      "explanation": "화장실은 개수뿐 아니라 위치, 청결, 접근성이 중요합니다. 다묘가정에서는 자원 경쟁을 줄여야 합니다."
+    },
+    {
+      "id": "cat-basic-03",
+      "tier": "basic",
+      "text": "소파를 긁는 고양이에게 가장 좋은 대응은?",
+      "options": [
+        {
+          "text": "혼내서 긁는 욕구를 없앤다",
+          "score": 0.05
+        },
+        {
+          "text": "좋아하는 재질과 각도의 스크래처를 제공하고 원하는 곳으로 유도한다",
+          "score": 1
+        },
+        {
+          "text": "발톱을 최대한 짧게 깎아 가구에 피해를 줄인다.",
+          "score": 0.2
+        },
+        {
+          "text": "발톱을 보호하기 위해 긁을만한 물건을 전부 없앤다",
+          "score": 0
+        }
+      ],
+      "explanation": "스크래칭은 발톱 관리, 영역 표시, 스트레칭이 섞인 자연 행동입니다. 금지보다 대체 장소 제공이 효과적입니다."
+    },
+    {
+      "id": "cat-basic-04",
+      "tier": "basic",
+      "text": "고양이가 편안해지는 집 환경으로 가장 좋은 것은?",
+      "options": [
+        {
+          "text": "늘 사람이 볼 수 있도록 숨을 곳 없이 탁 트인 곳이 안전하다",
+          "score": 0.05
+        },
+        {
+          "text": "안전한 숨숨집, 높은 공간, 조용한 휴식 장소를 제공한다",
+          "score": 1
+        },
+        {
+          "text": "밥, 물, 화장실은 되도록이면 한 곳에 모아둔다",
+          "score": 0.2
+        },
+        {
+          "text": "새 물건을 자주 대량으로 바꿔 지루하지 않게 한다",
+          "score": 0.1
+        }
+      ],
+      "explanation": "고양이는 선택권이 있을 때 안정감을 느낍니다. 숨을 곳과 높은 곳, 조용한 자리는 스트레스 완화에 도움이 됩니다."
+    },
+    {
+      "id": "cat-basic-05",
+      "tier": "basic",
+      "text": "고양이 음수량을 돕는 방법으로 가장 적절한 것은?",
+      "options": [
+        {
+          "text": "물그릇은 사료 바로 옆 하나면 충분하다",
+          "score": 0.3
+        },
+        {
+          "text": "깨끗한 물을 여러 위치에 두고, 선호에 따라 넓은 그릇·정수기·습식 등을 활용한다",
+          "score": 1
+        },
+        {
+          "text": "습식 사료가 있으므로 음수량은 크게 신경쓰지 않아도 된다",
+          "score": 0.1
+        },
+        {
+          "text": "목마르면 알아서 변기물을 마신다",
+          "score": 0
+        }
+      ],
+      "explanation": "물그릇 위치, 재질, 신선도에 민감한 고양이가 많습니다. 갑작스러운 음수량 변화는 건강 신호일 수 있습니다."
+    },
+    {
+      "id": "cat-basic-06",
+      "tier": "basic",
+      "text": "레이저 포인터로 놀아줄 때 가장 좋은 마무리는?",
+      "options": [
+        {
+          "text": "계속 흥미를 유지할 수 있도록 레이저 포인터를 최대한 잡지 못하게만 한다",
+          "score": 0.1
+        },
+        {
+          "text": "마지막에는 실제 장난감이나 간식을 ‘잡는’ 경험으로 끝낸다",
+          "score": 1
+        },
+        {
+          "text": "서서 레이저 포인터를 보기만 한다면 놀이를 멈추면 된다",
+          "score": 0.2
+        },
+        {
+          "text": "흥분이 최고조일 때는 잠시 쉬는 시간이 필요하다",
+          "score": 0.1
+        }
+      ],
+      "explanation": "사냥 놀이는 잡는 성취감이 있어야 덜 답답합니다. 오랫동안 먹이를 집중해서 보다가 잡으러 가는 경우가 있으므로 바로 반응이 없더라도 포기하지 않는 인내심이 중요합니다."
+    },
+    {
+      "id": "cat-basic-07",
+      "tier": "basic",
+      "text": "캐리어를 싫어하는 고양이에게 좋은 적응 방법은?",
+      "options": [
+        {
+          "text": "평소에는 넣어두고 병원 가는 날에만 꺼낸다",
+          "score": 0.1
+        },
+        {
+          "text": "평소에도 열어두고 담요, 간식, 놀이로 좋은 공간처럼 익숙하게 만든다",
+          "score": 1
+        },
+        {
+          "text": "캐리어를 좋은 것으로 바꾸면 잘 들어간다",
+          "score": 0.1
+        },
+        {
+          "text": "캐리어 대신 품에 안고 이동하면 항상 안전하다",
+          "score": 0.1
+        }
+      ],
+      "explanation": "캐리어가 평소 휴식 공간처럼 느껴지면 병원 이동 스트레스가 줄어듭니다."
+    },
+    {
+      "id": "cat-basic-08",
+      "tier": "basic",
+      "text": "고양이가 배를 보이며 누웠습니다. 가장 센스 있는 해석은?",
+      "options": [
+        {
+          "text": "배를 만져달라는 뜻이다",
+          "score": 0.1
+        },
+        {
+          "text": "편안함의 신호일 수 있지만, 배 만지는 허락인지는 고양이 반응을 봐야 한다",
+          "score": 1
+        },
+        {
+          "text": "간식을 달라는 뜻이다",
+          "score": 0.1
+        },
+        {
+          "text": "놀아 달라는 뜻이다",
+          "score": 0.15
+        }
+      ],
+      "explanation": "고양이의 배는 취약한 부위입니다. 보이는 것과 만져도 된다는 뜻은 다를 수 있습니다."
+    },
+    {
+      "id": "cat-basic-09",
+      "tier": "basic",
+      "text": "헤어볼이나 구토에 대한 태도로 가장 알맞은 것은?",
+      "options": [
+        {
+          "text": "고양이는 원래 매일 토하는 동물이다",
+          "score": 0.05
+        },
+        {
+          "text": "가끔 헤어볼은 있을 수 있지만, 반복 구토·식욕 저하·무기력은 병원 상담이 필요하다",
+          "score": 1
+        },
+        {
+          "text": "토를 너무 자주 한다면 음수량을 줄이는 것이 좋다",
+          "score": 0
+        },
+        {
+          "text": "헤어볼은 빗질과 전혀 관련 없다",
+          "score": 0.2
+        }
+      ],
+      "explanation": "반복 구토는 정상으로 넘기지 않는 편이 안전합니다. 빗질, 식이, 건강 상태를 함께 봐야 합니다."
+    },
+    {
+      "id": "cat-basic-10",
+      "tier": "basic",
+      "text": "집에 백합꽃이 들어왔습니다. 고양이 보호자의 가장 좋은 반응은?",
+      "options": [
+        {
+          "text": "향이 좋으니 고양이 가까이에 둔다",
+          "score": 0
+        },
+        {
+          "text": "고양이에게 위험할 수 있으니 닿지 않게 제거하는 것이 좋다",
+          "score": 1
+        },
+        {
+          "text": "평소 꽃잎을 먹지 않는 고양이라면 가까이 있는 것은 괜찮다",
+          "score": 0.1
+        },
+        {
+          "text": "식물은 알아서 피하니 상관없다",
+          "score": 0.05
+        }
+      ],
+      "explanation": "백합류는 고양이에게 매우 위험할 수 있습니다. 집 안 식물은 반입 전 안전성을 확인하는 습관이 좋습니다."
+    },
+    {
+      "id": "cat-intermediate-01",
+      "tier": "intermediate",
+      "text": "고양이가 당신을 보며 천천히 눈을 감았다 뜹니다. 흔한 해석은?",
+      "options": [
+        {
+          "text": "아프다는 신호이다",
+          "score": 0.05
+        },
+        {
+          "text": "편안함이나 신뢰의 신호일 수 있다",
+          "score": 1
+        },
+        {
+          "text": "공격 준비 신호이다",
+          "score": 0.05
+        },
+        {
+          "text": "밥을 달라는 신호이다",
+          "score": 0.25
+        }
+      ],
+      "explanation": "느린 눈깜빡임은 편안함이나 신뢰의 신호로 해석되는 경우가 많습니다. 단, 맥락과 다른 몸짓도 함께 봐야 합니다."
+    },
+    {
+      "id": "cat-intermediate-02",
+      "tier": "intermediate",
+      "text": "쓰다듬던 중 꼬리 끝이 빠르게 탁탁 움직이고 귀가 뒤로 눕습니다. 좋은 대응은?",
+      "options": [
+        {
+          "text": "더 열심히 쓰다듬어 긴장을 풀어준다",
+          "score": 0
+        },
+        {
+          "text": "과자극 신호일 수 있으니 손을 멈추고 거리를 준다",
+          "score": 1
+        },
+        {
+          "text": "기분이 매우 좋다는 뜻이니 배를 만진다",
+          "score": 0.05
+        },
+        {
+          "text": "입주변을 긁어달라는 신호이니 손가락을 입으로 댄다",
+          "score": 0
+        }
+      ],
+      "explanation": "꼬리, 귀, 피부 떨림, 몸 굳음은 ‘이제 그만’ 신호일 수 있습니다. 그만둘 줄 아는 집사가 오래 사랑받습니다."
+    },
+    {
+      "id": "cat-intermediate-03",
+      "tier": "intermediate",
+      "text": "새 고양이를 합사할 때 가장 좋은 방향은?",
+      "options": [
+        {
+          "text": "첫날 바로 한 방에 두고 서열을 정하게 한다",
+          "score": 0.05
+        },
+        {
+          "text": "분리 공간, 냄새 교환, 문틈·방묘문 시각 접촉, 짧은 긍정 경험으로 단계적으로 진행한다",
+          "score": 1
+        },
+        {
+          "text": "고양이들은 착한 동물이므로 처음에는 싸워도 며칠 두면 무조건 친해진다",
+          "score": 0.1
+        },
+        {
+          "text": "기존 고양이 물건을 모두 새 고양이에게도 바로 준다",
+          "score": 0
+        }
+      ],
+      "explanation": "합사는 속도가 아니라 안전한 누적 경험이 중요합니다. 기존 고양이의 영역감과 자원 안정성을 지켜줘야 합니다."
+    },
+    {
+      "id": "cat-intermediate-04",
+      "tier": "intermediate",
+      "text": "고양이가 화장실 밖에 소변을 보기 시작했습니다. 가장 먼저 떠올릴 것은?",
+      "options": [
+        {
+          "text": "배변 훈련은 중요하므로 즉시 혼낸다",
+          "score": 0
+        },
+        {
+          "text": "비뇨기 문제, 통증, 스트레스, 화장실 환경 문제를 함께 의심한다",
+          "score": 1
+        },
+        {
+          "text": "고양이는 원래 가끔 실수한다",
+          "score": 0.15
+        },
+        {
+          "text": "과도한 소변량을 줄이기 위해 음수량을 줄인다",
+          "score": 0
+        }
+      ],
+      "explanation": "배변·배뇨 변화는 건강 또는 스트레스 신호일 수 있습니다. 처벌보다 원인 확인이 우선입니다."
+    },
+    {
+      "id": "cat-intermediate-05",
+      "tier": "intermediate",
+      "text": "고양이 놀이 루틴을 ‘사냥 행동’에 맞추려면 가장 좋은 흐름은?",
+      "options": [
+        {
+          "text": "계속 빠르게 흔들어 숨 돌릴 틈 없이 뛰게 한다",
+          "score": 0.15
+        },
+        {
+          "text": "숨기기·추적·덮치기·잡기 후 작은 보상이나 식사로 마무리한다",
+          "score": 1
+        },
+        {
+          "text": "장난감을 얼굴 앞으로 들이대는 것을 제일 좋아한다",
+          "score": 0.1
+        },
+        {
+          "text": "고양이가 최대한 사냥감을 잡지 못하도록 해서 스릴을 올린다",
+          "score": 0.3
+        }
+      ],
+      "explanation": "사냥 놀이는 관찰, 추적, 돌진, 포획의 리듬이 있을 때 몰입도가 높습니다."
+    },
+    {
+      "id": "cat-intermediate-06",
+      "tier": "intermediate",
+      "text": "고양이 스트레스 신호로 보기 어려운 것은?",
+      "options": [
+        {
+          "text": "숨는 시간이 갑자기 늘었다",
+          "score": 0.15
+        },
+        {
+          "text": "털을 과하게 핥아 탈모가 생겼다",
+          "score": 0.1
+        },
+        {
+          "text": "식욕, 배변, 놀이 반응이 평소와 달라졌다",
+          "score": 0.15
+        },
+        {
+          "text": "간식을 달라고 냐옹거린다",
+          "score": 1
+        }
+      ],
+      "explanation": "고양이 스트레스는 숨기, 과도한 그루밍, 식욕·배변 변화처럼 조용하게 나타날 수 있습니다."
+    },
+    {
+      "id": "cat-intermediate-07",
+      "tier": "intermediate",
+      "text": "고양이가 골골송을 냅니다. 가장 정확한 해석은?",
+      "options": [
+        {
+          "text": "항상 행복하다는 뜻이다",
+          "score": 0.35
+        },
+        {
+          "text": "편안함일 수 있지만 통증·불안 상황에서도 날 수 있다",
+          "score": 1
+        },
+        {
+          "text": "항상 아프다는 뜻이다",
+          "score": 0.1
+        },
+        {
+          "text": "밥을 먹고 싶을 때만 내는 소리다",
+          "score": 0.2
+        }
+      ],
+      "explanation": "골골송은 행복의 신호일 때가 많지만, 자기 진정이나 불편함의 맥락에서도 들릴 수 있습니다."
+    },
+    {
+      "id": "cat-intermediate-08",
+      "tier": "intermediate",
+      "text": "다묘가정에서 자원 배치를 잘한 예는?",
+      "options": [
+        {
+          "text": "밥, 물, 화장실을 한곳에 모아 관리가 쉽도록 한다",
+          "score": 0.2
+        },
+        {
+          "text": "밥·물·화장실·스크래처·쉼터를 여러 위치에 분산해 막힘과 경쟁을 줄인다",
+          "score": 1
+        },
+        {
+          "text": "서열 높은 고양이가 먼저 쓰게 자원을 적게 둔다",
+          "score": 0.05
+        },
+        {
+          "text": "숨을 곳을 없애 서로 자주 보게 한다",
+          "score": 0
+        }
+      ],
+      "explanation": "고양이끼리 친해 보여도 자원 접근은 따로 보장하는 것이 안정적입니다. 막다른 동선도 피하는 편이 좋습니다."
+    },
+    {
+      "id": "cat-expert-01",
+      "tier": "expert",
+      "text": "수컷 고양이가 화장실을 자주 들락거리지만 소변이 거의 안 나오고 울음소리를 냅니다. 가장 안전한 판단은?",
+      "options": [
+        {
+          "text": "모래가 마음에 안 드는 행동이니 하루 지켜본다",
+          "score": 0.05
+        },
+        {
+          "text": "요도 폐색 등 응급 가능성이 있으니 즉시 병원에 연락한다",
+          "score": 1
+        },
+        {
+          "text": "화장실 위치를 바꾸면 괜찮아진다",
+          "score": 0.1
+        },
+        {
+          "text": "배변 훈련은 중요하므로 즉시 혼을 낸다",
+          "score": 0
+        }
+      ],
+      "explanation": "소변이 안 나오는 상황은 특히 수컷 고양이에서 응급일 수 있습니다. 지켜보기보다 병원 연락이 우선입니다."
+    },
+    {
+      "id": "cat-expert-02",
+      "tier": "expert",
+      "text": "며칠 동안 식욕이 거의 없는 고양이에게 특히 걱정해야 할 위험은?",
+      "options": [
+        {
+          "text": "살이 빠져서 오히려 건강해지는 것이다",
+          "score": 0
+        },
+        {
+          "text": "지방간 등 심각한 문제로 이어질 수 있어 빠른 병원 상담이 필요하다",
+          "score": 1
+        },
+        {
+          "text": "고양이는 스스로 단식 조절을 잘하니 괜찮을 것이다",
+          "score": 0.05
+        },
+        {
+          "text": "간식을 숨기면 배고파서 언젠가 먹는다",
+          "score": 0.1
+        }
+      ],
+      "explanation": "고양이의 식욕 부진은 가볍게 넘기기 어렵습니다. 특히 지속되면 빠르게 상담해야 합니다."
+    },
+    {
+      "id": "cat-expert-03",
+      "tier": "expert",
+      "text": "창밖 길고양이를 본 뒤 갑자기 같이 사는 고양이를 공격했습니다. 가장 그럴듯한 개념은?",
+      "options": [
+        {
+          "text": "리다이렉티드 어그레션, 즉 외부 자극으로 생긴 흥분이 가까운 대상에게 전환된 상황",
+          "score": 1
+        },
+        {
+          "text": "고양이끼리는 원래 하루 한 번 싸워야 친해진다",
+          "score": 0.05
+        },
+        {
+          "text": "복수심 때문에 일부러 약한 고양이를 괴롭히는 것",
+          "score": 0.1
+        },
+        {
+          "text": "배가 고프면 생기는 정상 놀이",
+          "score": 0
+        }
+      ],
+      "explanation": "전환 공격은 흥분이 가라앉기 전까지 분리와 안전 관리가 필요합니다. 무리하게 다시 붙이면 악화될 수 있습니다."
+    },
+    {
+      "id": "cat-expert-04",
+      "tier": "expert",
+      "text": "고양이 특발성 방광염(FIC) 관리에서 자주 함께 언급되는 핵심은?",
+      "options": [
+        {
+          "text": "소변 실수를 줄이기 위해 엄격한 배변 훈련을 하기",
+          "score": 0
+        },
+        {
+          "text": "수의학적 확인과 함께 스트레스·환경·음수량·화장실 접근성을 종합 관리하기",
+          "score": 1
+        },
+        {
+          "text": "화장실을 하나로 줄여 습관을 단순화하기",
+          "score": 0.05
+        },
+        {
+          "text": "물을 제한해 방광을 쉬게 하기",
+          "score": 0
+        }
+      ],
+      "explanation": "FIC는 단순 행동 문제가 아닐 수 있습니다. 의학적 평가와 환경 관리가 함께 필요합니다."
+    },
+    {
+      "id": "cat-expert-05",
+      "tier": "expert",
+      "text": "고양이 페로몬·냄새 의사소통을 이해한 행동은?",
+      "options": [
+        {
+          "text": "새 가구가 오면 집 안 냄새를 모두 강한 세제로 지우는 것이 좋다",
+          "score": 0.1
+        },
+        {
+          "text": "얼굴 비비기, 스크래칭 등 냄새 표시 행동을 자연스러운 안정 신호로 보고 적절한 스크래처와 익숙한 냄새를 남긴다",
+          "score": 1
+        },
+        {
+          "text": "고양이는 냄새보단 소리에 민감하다",
+          "score": 0.05
+        },
+        {
+          "text": "모든 냄새 표시 행동은 배변 문제다",
+          "score": 0
+        }
+      ],
+      "explanation": "고양이는 냄새로 공간을 이해합니다. 갑작스러운 냄새 제거와 환경 변화는 스트레스가 될 수 있습니다."
+    },
+    {
+      "id": "cat-expert-06",
+      "tier": "expert",
+      "text": "새끼 고양이의 놀이 공격성을 줄이는 방향으로 가장 적절한 것은?",
+      "options": [
+        {
+          "text": "손으로 거칠게 놀아줘 마음껏 놀 수 있도록 한다",
+          "score": 0
+        },
+        {
+          "text": "손발을 장난감처럼 쓰지 않고, 낚싯대·킥커로 에너지를 뺀다",
+          "score": 1
+        },
+        {
+          "text": "물면 코를 때려서 기강을 잡는다",
+          "score": 0
+        },
+        {
+          "text": "놀아주는 것을 최소화 한다",
+          "score": 0.05
+        }
+      ],
+      "explanation": "손발 놀이는 물기 습관을 강화할 수 있습니다. 안전한 장난감으로 사냥 욕구를 풀어주는 편이 좋습니다."
+    },
+    {
+      "id": "cat-expert-07",
+      "tier": "expert",
+      "text": "고양이 발톱 제거술에 대한 윤리적·행동학적 논의에서 핵심에 가까운 것은?",
+      "options": [
+        {
+          "text": "스크래칭을 완전히 해결하는 가벼운 미용 시술이다",
+          "score": 0
+        },
+        {
+          "text": "통증·보행·행동 문제 우려가 있어, 다른 대안들이 우선 논의된다",
+          "score": 1
+        },
+        {
+          "text": "발톱이 없으면 고양이가 더이상 스트레스를 받지 않을 것이다",
+          "score": 0
+        },
+        {
+          "text": "실내묘는 발톱이 필요 없으니 기본적으로 권장된다",
+          "score": 0.05
+        }
+      ],
+      "explanation": "스크래칭은 자연 행동입니다. 문제를 없애기보다 대체 장소와 스크래처·발톱 관리·환경 조정 같은 관리 방법을 마련하는 방향이 더 안전합니다."
+    }
+  ]
+};
+
+    const ANIMALS = {
+      dog: {
+        emoji: "🐶",
+        title: "견주 자격 테스트",
+        scoreName: "견주 점수",
+        other: "cat",
+        ranks: [
+          { min: 95, title: "댕댕이 박사", copy: "산책 가방 안에 물, 간식, 배변봉투, 보호자 센스까지 다 들어있네요." },
+          { min: 80, title: "멍잘알 견주", copy: "강아지 마음과 안전을 꽤 잘 읽습니다. 주변 강아지들이 편하게 느낄 타입이에요." },
+          { min: 60, title: "든든한 실전 견주", copy: "기본기는 탄탄합니다. 박사 난이도 몇 개만 채우면 거의 전문가 느낌이에요." },
+          { min: 40, title: "산책 입문 보호자", copy: "애정은 충분합니다. 산책·훈련·응급상황 감각을 조금 더 다지면 좋아요." },
+          { min: 0, title: "간식 창고부터 채우자", copy: "귀여움에는 합격, 실전 지식은 워밍업 단계입니다. 오늘부터 하나씩 쌓아봐요." }
+        ]
+      },
+      cat: {
+        emoji: "🐱",
+        title: "집사 자격 테스트",
+        scoreName: "집사 점수",
+        other: "dog",
+        ranks: [
+          { min: 95, title: "고양이 박사 집사", copy: "냥님이 새벽 4시에 깨워도 이유를 추리할 수 있는 수준입니다." },
+          { min: 80, title: "간택받은 집사", copy: "고양이의 공간, 냄새, 놀이, 기분 신호를 잘 이해하고 있어요." },
+          { min: 60, title: "센스 있는 실전 집사", copy: "기본 케어 감각이 좋습니다. 합사와 건강 신호 문제만 더 익히면 탄탄해요." },
+          { min: 40, title: "캣타워 조립 중", copy: "애정은 충분합니다. 화장실·놀이·환경 풍부화를 조금 더 챙겨봐요." },
+          { min: 0, title: "츄르 입문반", copy: "냥님은 귀엽지만 까다롭습니다. 오늘부터 집사 매뉴얼을 업데이트해요." }
+        ]
+      }
+    };
+
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+
+    let questionBank = clone(DEFAULT_QUESTION_BANK);
+    let state = {
+      screen: "start",
+      animal: null,
+      questions: [],
+      current: 0,
+      score: 0,
+      selected: null,
+      answers: [],
+      breakdown: {}
+    };
+
+    function clone(data) {
+      return JSON.parse(JSON.stringify(data));
+    }
+
+
+
+    function validateBank(bank) {
+      const errors = [];
+      const counts = {
+        dog: { basic: 0, intermediate: 0, expert: 0 },
+        cat: { basic: 0, intermediate: 0, expert: 0 }
+      };
+
+      if (!bank || typeof bank !== "object") {
+        return { ok: false, errors: ["질문은행은 객체여야 합니다."], counts };
+      }
+
+      ["dog", "cat"].forEach((animal) => {
+        if (!Array.isArray(bank[animal])) {
+          errors.push(`${animal} 배열이 필요합니다.`);
+          return;
+        }
+
+        bank[animal].forEach((q, index) => {
+          const path = `${animal}[${index}]`;
+          if (!q || typeof q !== "object") {
+            errors.push(`${path}: 문항 객체가 아닙니다.`);
+            return;
+          }
+
+          if (!q.id || typeof q.id !== "string") errors.push(`${path}: id가 필요합니다.`);
+          if (!q.text || typeof q.text !== "string") errors.push(`${path}: text가 필요합니다.`);
+          if (!TIER_META[q.tier]) errors.push(`${path}: tier는 basic, intermediate, expert 중 하나여야 합니다.`);
+          else counts[animal][q.tier] += 1;
+
+          if (!Array.isArray(q.options) || q.options.length < 2) {
+            errors.push(`${path}: options는 최소 2개 이상이어야 합니다.`);
+          } else {
+            let hasFull = false;
+            q.options.forEach((opt, optIndex) => {
+              if (!opt || typeof opt !== "object") {
+                errors.push(`${path}.options[${optIndex}]: 선택지 객체가 아닙니다.`);
+                return;
+              }
+              if (!opt.text || typeof opt.text !== "string") errors.push(`${path}.options[${optIndex}]: text가 필요합니다.`);
+              if (typeof opt.score !== "number" || Number.isNaN(opt.score) || opt.score < 0 || opt.score > 1) {
+                errors.push(`${path}.options[${optIndex}]: score는 0 이상 1 이하 숫자여야 합니다.`);
+              }
+              if (opt.score === 1) hasFull = true;
+            });
+            if (!hasFull) errors.push(`${path}: score 1인 최고점 선택지가 최소 1개 필요합니다.`);
+          }
+
+          if (!q.explanation || typeof q.explanation !== "string") errors.push(`${path}: explanation이 필요합니다.`);
+        });
+
+        Object.entries(TIER_META).forEach(([tier, meta]) => {
+          if (counts[animal][tier] < meta.quota) {
+            errors.push(`${animal}.${tier}: 최소 ${meta.quota}개가 필요합니다. 현재 ${counts[animal][tier]}개입니다.`);
+          }
+        });
+      });
+
+      return { ok: errors.length === 0, errors, counts };
+    }
+
+    function tierLabel(tier) {
+      const meta = TIER_META[tier];
+      return `${meta.emoji} ${meta.label}`;
+    }
+
+    function shuffle(array) {
+      const next = array.slice();
+      for (let i = next.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [next[i], next[j]] = [next[j], next[i]];
+      }
+      return next;
+    }
+
+    function selectQuizQuestions(animal) {
+      const result = validateBank(questionBank);
+      if (!result.ok) {
+        showToast("문항 데이터 오류가 있어 테스트를 시작할 수 없습니다.");
+        throw new Error("Invalid question bank");
+      }
+
+      const selected = [];
+      Object.entries(TIER_META).forEach(([tier, meta]) => {
+        const pool = questionBank[animal].filter((q) => q.tier === tier);
+        selected.push(...shuffle(pool).slice(0, meta.quota));
+      });
+
+      return shuffle(selected).map((q) => ({
+        ...clone(q),
+        options: shuffle(q.options)
+      }));
+    }
+
+    function showScreen(name) {
+      state.screen = name;
+      ["start", "quiz", "result"].forEach((screen) => {
+        $(`#${screen}-screen`).classList.toggle("hidden", screen !== name);
+      });
+      $$(".tab-btn").forEach((btn) => btn.classList.toggle("active", btn.dataset.screen === (name === "quiz" || name === "result" ? "start" : name)));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function refreshCounts() {
+      const result = validateBank(questionBank);
+      ["dog", "cat"].forEach((animal) => {
+        ["basic", "intermediate", "expert"].forEach((tier) => {
+          const count = result.counts[animal][tier] || 0;
+          const el = $(`#${animal}-${tier}-count`);
+          if (el) el.textContent = count;
+        });
+      });
+    }
+
+
+
+    function startQuiz(animal) {
+      const questions = selectQuizQuestions(animal);
+      state = {
+        screen: "quiz",
+        animal,
+        questions,
+        current: 0,
+        score: 0,
+        selected: null,
+        answers: [],
+        breakdown: Object.fromEntries(Object.keys(TIER_META).map((tier) => [tier, { score: 0, max: 0, count: 0 }]))
+      };
+
+      questions.forEach((q) => {
+        state.breakdown[q.tier].max += TIER_META[q.tier].points;
+        state.breakdown[q.tier].count += 1;
+      });
+
+      $("#quiz-title").textContent = `${ANIMALS[animal].emoji} ${ANIMALS[animal].title}`;
+      $("#quiz-subtitle").textContent = "총 10문항입니다. 선택지마다 부분 점수가 있으니 가장 보호자다운 답을 골라보세요.";
+      $("#score-label").textContent = ANIMALS[animal].scoreName;
+      showScreen("quiz");
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const q = state.questions[state.current];
+      const meta = TIER_META[q.tier];
+      state.selected = null;
+
+      $("#progress-text").textContent = `${state.current + 1} / ${state.questions.length}`;
+      $("#difficulty-text").textContent = `${meta.emoji} ${meta.label} · ${meta.points}점 문항`;
+      $("#progress-bar").style.width = `${(state.current / state.questions.length) * 100}%`;
+      $("#live-score").textContent = Math.round(state.score);
+      $("#tier-badge").textContent = tierLabel(q.tier);
+      $("#question-id").textContent = q.id;
+      $("#question-text").textContent = q.text;
+      $("#feedback").classList.add("hidden");
+      $("#feedback").innerHTML = "";
+      $("#next-btn").disabled = true;
+      $("#next-btn").textContent = state.current === state.questions.length - 1 ? "결과 보기" : "다음 문제";
+
+      const answers = $("#answers");
+      answers.innerHTML = "";
+
+      q.options.forEach((option, index) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "answer-btn";
+        btn.textContent = option.text;
+        btn.addEventListener("click", () => chooseAnswer(index));
+        answers.appendChild(btn);
+      });
+    }
+
+    function chooseAnswer(index) {
+      if (state.selected !== null) return;
+
+      const q = state.questions[state.current];
+      const option = q.options[index];
+      const points = TIER_META[q.tier].points;
+      const gained = Math.round(option.score * points * 10) / 10;
+      const bestScore = Math.max(...q.options.map((opt) => opt.score));
+
+      state.selected = index;
+      state.score += gained;
+      state.breakdown[q.tier].score += gained;
+      state.answers.push({
+        question: q.text,
+        id: q.id,
+        tier: q.tier,
+        selected: option.text,
+        scoreRatio: option.score,
+        gained,
+        max: points,
+        explanation: q.explanation,
+        best: q.options.filter((opt) => opt.score === bestScore).map((opt) => opt.text)
+      });
+
+      $$("#answers .answer-btn").forEach((btn, btnIndex) => {
+        btn.disabled = true;
+        const opt = q.options[btnIndex];
+        if (btnIndex === index) {
+          btn.classList.add("selected");
+          if (opt.score < 0.5) btn.classList.add("low");
+        }
+        if (opt.score === bestScore) btn.classList.add("best");
+      });
+
+      const feedback = $("#feedback");
+      const verdict = option.score === 1 ? "완벽한 보호자 답변!" : option.score >= 0.5 ? "부분 점수! 방향은 괜찮아요." : "아깝습니다. 이 상황은 조금 더 조심해야 해요.";
+      feedback.innerHTML = `<strong>${verdict}</strong><br>${escapeHtml(q.explanation)}<br><span>획득 점수: ${gained} / ${points}점</span>`;
+      feedback.classList.remove("hidden");
+      $("#live-score").textContent = Math.round(state.score);
+      $("#next-btn").disabled = false;
+      $("#progress-bar").style.width = `${((state.current + 1) / state.questions.length) * 100}%`;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function nextQuestion() {
+      if (state.current < state.questions.length - 1) {
+        state.current += 1;
+        renderQuestion();
+      } else {
+        renderResult();
+      }
+    }
+
+    function renderResult() {
+      const animal = ANIMALS[state.animal];
+      const score = Math.max(0, Math.min(100, Math.round(state.score)));
+      const rank = animal.ranks.find((item) => score >= item.min) || animal.ranks[animal.ranks.length - 1];
+
+      $("#result-title").textContent = `${animal.emoji} ${animal.scoreName} 결과`;
+      $("#result-subtitle").textContent = `${state.questions.length}문항 중 랜덤 난이도 조합으로 계산한 재미용 점수입니다.`;
+      $("#score-number").textContent = score;
+      $("#score-ring").style.setProperty("--angle", `${score * 3.6}deg`);
+      $("#rank").textContent = rank.title;
+      $("#rank-copy").textContent = rank.copy;
+
+      const breakdown = $("#breakdown");
+      breakdown.innerHTML = "";
+      Object.entries(TIER_META).forEach(([tier, meta]) => {
+        const data = state.breakdown[tier];
+        const percent = data.max ? Math.round((data.score / data.max) * 100) : 0;
+        const item = document.createElement("div");
+        item.className = "break-item";
+        item.innerHTML = `
+          <div class="row"><span>${meta.emoji} ${meta.label}</span><span>${Math.round(data.score)} / ${data.max}</span></div>
+          <div class="thin-bar" aria-hidden="true"><span style="width:${percent}%"></span></div>
+        `;
+        breakdown.appendChild(item);
+      });
+
+      const review = $("#review-list");
+      review.innerHTML = "";
+      state.answers.forEach((answer, index) => {
+        const item = document.createElement("div");
+        item.className = "review-item";
+        const bestText = answer.best.join(" / ");
+        item.innerHTML = `
+          <b>${index + 1}. ${escapeHtml(answer.question)}</b>
+          <span class="pill">${tierLabel(answer.tier)} · ${answer.gained}/${answer.max}점</span>
+          <div class="user-answer">내 답: ${escapeHtml(answer.selected)}</div>
+          <div>추천 답: ${escapeHtml(bestText)}</div>
+          <div>${escapeHtml(answer.explanation)}</div>
+        `;
+        review.appendChild(item);
+      });
+
+      showScreen("result");
+      burstConfetti();
+    }
+
+    function burstConfetti() {
+      const emojis = ["🐾", "🦴", "🐟", "💖", "🎉", "✨"];
+      for (let i = 0; i < 26; i += 1) {
+        const piece = document.createElement("span");
+        piece.className = "confetti-piece";
+        piece.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        piece.style.left = `${Math.random() * 100}vw`;
+        piece.style.animationDelay = `${Math.random() * 240}ms`;
+        piece.style.fontSize = `${18 + Math.random() * 16}px`;
+        document.body.appendChild(piece);
+        setTimeout(() => piece.remove(), 1800);
+      }
+    }
+
+    function resultText() {
+      const animal = ANIMALS[state.animal];
+      const score = Math.round(state.score);
+      const rank = animal.ranks.find((item) => score >= item.min) || animal.ranks[animal.ranks.length - 1];
+      return `${animal.scoreName}: ${score}점\n등급: ${rank.title}\n${rank.copy}`;
+    }
+
+    async function copyText(text, successMessage) {
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast(successMessage);
+      } catch (error) {
+        const temp = document.createElement("textarea");
+        temp.value = text;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand("copy");
+        temp.remove();
+        showToast(successMessage);
+      }
+    }
+
+
+    function showToast(message) {
+      const toast = $("#toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("show"), 1500);
+    }
+
+
+    function bindEvents() {
+
+      $$("[data-start]").forEach((btn) => {
+        btn.addEventListener("click", () => startQuiz(btn.dataset.start));
+      });
+
+      $("#next-btn").addEventListener("click", nextQuestion);
+      $("#back-to-start-btn").addEventListener("click", () => showScreen("start"));
+      $("#restart-same-btn").addEventListener("click", () => startQuiz(state.animal));
+      $("#restart-other-btn").addEventListener("click", () => showScreen("start"));
+      $("#copy-result-btn").addEventListener("click", () => copyText(resultText(), "결과를 복사했어요."));
+    }
+
+    bindEvents();
+    refreshCounts();
+  </script>
+</body>
+</html>
