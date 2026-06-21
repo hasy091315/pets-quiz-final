@@ -36,6 +36,10 @@
 - 문제별 해설 제공
 
 ### 결과 화면
+<p align="center">
+  <img src="imagesresult-screen.png" width="900">
+</p>
+imagesresult-screen
 - 최종 점수 확인
 - 보호자 등급 표시
 - 답변 리뷰 제공
