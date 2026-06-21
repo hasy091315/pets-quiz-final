@@ -60,7 +60,7 @@ imagesresult-screen
 
 ## 🎬 데모
 
-[데모 보기](https://사용자이름.github.io/저장소이름/)
+[데모 보기](https://hasy091315.github.io/pets-quiz-final/)
 
 ---
 
@@ -75,3 +75,5 @@ imagesresult-screen
 - 실제 반려동물 건강 진단 기능
 
 현재 버전은 브라우저에서 동작하는 단일 HTML 기반 퀴즈 애플리케이션입니다.
+점차 이것들 또한 가능하게 웹을 확장시켜 나가겠습니다!
+감사합니다.
